@@ -1,0 +1,38 @@
+{% extends 'ddp/main.html' %}
+
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="welcome-section">
+        <h1>🌟 Welcome to Data Deduplication System</h1>
+        <p>Upload | Share | Manage your files efficiently with intelligent deduplication</p>
+        
+        <img style="max-width: 400px; margin: 30px auto; display: block;" src="{% static 'images/cloud1.gif' %}">
+        
+        <div style="margin-top: 30px;">
+            <a href="{% url 'admin' user.username %}" class="btn btn-primary btn-lg">
+                🚀 Go to Dashboard
+            </a>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto;">
+            <h3 style="color: var(--primary-color); margin-bottom: 20px;">✨ Key Features:</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                    💾 <strong>Smart Deduplication:</strong> Automatically detects and removes duplicate files
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                    🔒 <strong>Secure Storage:</strong> Your files are stored safely using advanced checksums
+                </li>
+                <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                    🔄 <strong>Easy Sharing:</strong> Share files with other users seamlessly
+                </li>
+                <li style="padding: 10px 0;">
+                    📈 <strong>Storage Analytics:</strong> Track your storage savings and file statistics
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

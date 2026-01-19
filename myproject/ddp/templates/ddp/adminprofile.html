@@ -1,0 +1,431 @@
+{% extends 'ddp/main.html' %}
+
+{% block content %}
+
+<div class="col">
+    <div class="col-md">
+		<div class="card card-body">
+			<h5>Welcome to DDRUFC Admin</h5>
+			<hr>
+            <p><strong>Name:</strong> {{user.username}}</p>
+			<p><strong>Email:</strong> {{user.email}}</p>
+		</div>
+	</div>
+    
+    <div class="col-md">
+		<div class="card card-body" style="background: linear-gradient(135deg, #4A90E2, #50C878); color: white;">
+			<h5 style="color: white;">📄 Quick Actions</h5>
+			<hr style="border-color: rgba(255,255,255,0.3);">
+            <a href="{% url 'upload' user.username %}" class="btn btn-light btn-block mb-2">
+                📁 Upload File
+            </a>
+            <p class="mb-0" style="font-size: 0.9rem; opacity: 0.9;">
+                Upload files and the system will automatically detect and remove duplicates!
+            </p>
+		</div>
+	</div>
+</div>
+
+<br>
+
+<!-- Statistics Dashboard -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card primary">
+            <div class="stat-icon">📁</div>
+            <div class="stat-value">{{ stats.total_unique_files }}</div>
+            <div class="stat-label">Unique Files</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card success">
+            <div class="stat-icon">📤</div>
+            <div class="stat-value">{{ stats.total_uploads }}</div>
+            <div class="stat-label">Total Uploads</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card warning">
+            <div class="stat-icon">💾</div>
+            <div class="stat-value">{{ stats.storage_saved }}</div>
+            <div class="stat-label">Storage Saved</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card danger">
+            <div class="stat-icon">🔗</div>
+            <div class="stat-value">{{ stats.duplicate_references }}</div>
+            <div class="stat-label">Duplicates Found</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="stat-card primary">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value">{{ stats.total_users }}</div>
+            <div class="stat-label">Active Users</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card success">
+            <div class="stat-icon">🔄</div>
+            <div class="stat-value">{{ stats.total_shares }}</div>
+            <div class="stat-label">Shared Files</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card warning">
+            <div class="stat-icon">💿</div>
+            <div class="stat-value">{{ stats.total_storage }}</div>
+            <div class="stat-label">Total Storage</div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<!-- My Uploads Section -->
+<div class="col">
+    <div class="col">
+		<div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #4A90E2, #357ABD);">
+                <h5 class="mb-0" style="color: white;">📋 My Uploaded Files</h5>
+            </div>
+            <div class="card-body">
+                {% if admin_uploads %}
+                    <table class="table table-sm table-hover">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Date Created</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for file in admin_uploads %}
+                        <tr>
+                            <td><strong>{{file.u_title}}</strong></td>
+                            <td>{{file.u_date|date:"M d, Y H:i"}}</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="{% url 'download' file.u_title %}">View</a>
+                                <a class="btn btn-sm btn-success" href="{% url 'share' file.u_title %}">Share</a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'delete' file.u_title %}">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted text-center py-3">You haven't uploaded any files yet. <a href="{% url 'upload' user.username %}">Upload your first file</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<!-- My Shared Files Section -->
+<div class="col">
+    <div class="col">
+		<div class="card">
+            <div class="card-header" style="background: linear-gradient(135deg, #50C878, #27AE60);">
+                <h5 class="mb-0" style="color: white;">🔄 Files Shared With Me</h5>
+            </div>
+            <div class="card-body">
+                {% if admin_shares %}
+                    <table class="table table-sm table-hover">
+                        <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Shared By</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for share in admin_shares %}
+                        <tr>
+                            <td><strong>{{share.s_title}}</strong></td>
+                            <td>{{share.shared_by}}</td>
+                            <td>{{share.s_date|date:"M d, Y H:i"}}</td>
+                            <td>
+                                <a class="btn btn-sm btn-info" href="{% url 'download' share.s_title %}">View</a>
+                                <a class="btn btn-sm btn-danger" href="{% url 'deleteshare' share.id %}">Remove</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="text-muted text-center py-3">No files have been shared with you yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="col">
+    <h3 style="color: var(--primary-color); margin: 20px 0;">🛠️ Admin Management</h3>
+</div>
+
+<br>
+
+
+
+
+<div class="col">
+    <div class="col">
+		<div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">👥 Active Users' Details</h5>
+            </div>
+            <div class="card-body">
+			<form method="get" class="search-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-8">
+                        <label>Name:</label>
+                        {{usersfilter.form.username}}
+                    </div>
+                    <div class="col-md-4">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary btn-block" type="submit">Search</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+        </div>
+	</div>
+</div>
+
+
+
+
+<div class="col">
+    <div class="col-md">
+		<div class="card">
+            <div class="card-body">
+			<table class="table table-sm table-hover scrolldown">
+				<thead>
+				<tr>
+                    <th>User name</th>
+					<th>Email</th>
+					<th>Date Registered</th>
+                    <th>Action</th>
+				</tr>
+				</thead>
+				<tbody>
+                    {% for user in users %}
+				<tr>
+                    <td>{{user.username}}</td>
+					<td>{{user.email}}</td>
+                    <td>{{user.date_joined|date:"M d, Y"}}</td>
+					<td><a class="btn btn-sm btn-danger" href="{% url 'blockuser' user.username %}">Block User</a></td>
+				</tr>
+					{% endfor %}
+                </tbody>
+			</table>
+		</div>
+        </div>
+	</div>
+</div>
+
+<br>
+
+
+
+
+<div class="col">
+    <div class="col">
+		<div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🚫 Blocked Users' Details</h5>
+            </div>
+		</div>
+	</div>
+</div>
+
+<div class="col">
+    <div class="col-md">
+		<div class="card">
+            <div class="card-body">
+			<table class="table table-sm table-hover scrolldown">
+				<thead>
+				<tr>
+                    <th>User name</th>
+					<th>Email</th>
+					<th>Date Registered</th>
+                    <th>Action</th>
+				</tr>
+				</thead>
+				<tbody>
+                    {% for user in blocked_users %}
+				<tr>
+                    <td>{{user.username}}</td>
+					<td>{{user.email}}</td>
+                    <td>{{user.date_joined|date:"M d, Y"}}</td>
+					<td><a class="btn btn-sm btn-success" href="{% url 'activeuser' user.username %}">Activate User</a></td>
+				</tr>
+					{% endfor %}
+                </tbody>
+			</table>
+		</div>
+        </div>
+	</div>
+</div>
+
+
+
+
+
+
+<br>
+<div class="col">
+    <div class="col">
+		<div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📂 Details of Uploaded Files</h5>
+            </div>
+            <div class="card-body">
+			<form method="get" class="search-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Title:</label>
+                        {{upload_filters.form.u_title}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>From date:</label>
+                        {{upload_filters.form.start_date}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>To date:</label>
+                        {{upload_filters.form.end_date}}
+                    </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary btn-block" type="submit">Search</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+        </div>
+	</div>
+</div>
+
+
+<div class="col">
+    <div class="col-md">
+		<div class="card">
+            <div class="card-body">
+			<table class="table table-sm table-hover scrolldown">
+				<thead>
+				<tr>
+                    <th>Created by</th>
+					<th>Title</th>
+					<th>Date Created</th>
+					<th>Actions</th>
+				</tr>
+				</thead>
+				<tbody>
+                    {% for file in uploaded_files %}
+				<tr>
+                    <td>{{file.uploaded_by}}</td>
+					<td><strong>{{file.u_title}}</strong></td>
+					<td>{{file.u_date|date:"M d, Y H:i"}}</td>
+					<td>
+                        <a class="btn btn-sm btn-info" href="{% url 'download' file.u_title %}">View</a>
+                        <a class="btn btn-sm btn-danger" href="{% url 'delete' file.u_title %}">Delete</a>
+                    </td>
+				</tr>
+					{% endfor %}
+                </tbody>
+			</table>
+		</div>
+        </div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+<br>
+
+<div class="col">
+	<div class="col">
+		<div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🔄 Details of Shared Files</h5>
+            </div>
+            <div class="card-body">
+			<form method="get" class="search-form">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Title:</label>
+                        {{mysharefilter.form.s_title}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>From date:</label>
+                        {{mysharefilter.form.s_start_date}}
+                    </div>
+                    <div class="col-md-3">
+                        <label>To date:</label>
+                        {{mysharefilter.form.s_end_date}}
+                    </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <button class="btn btn-primary btn-block" type="submit">Search</button>
+                    </div>
+                </div>
+			</form>
+		</div>
+        </div>
+	</div>
+</div>
+
+
+<div class="col">
+	<div class="col-md">
+		<div class="card">
+            <div class="card-body">
+			<table class="table table-sm table-hover scrolldown">
+				<thead>
+				<tr>
+                    <th>Shared by</th>
+                    <th>Shared to</th>
+                    <th>Title</th>
+					<th>Date Created</th>
+					<th>Actions</th>
+				</tr>
+				</thead>
+				<tbody>
+						{% for share in shares %}
+				<tr>
+                    <td>{{share.shared_by}}</td>
+                    <td>{{share.shared_to}}</td>
+					<td><strong>{{share.s_title}}</strong></td>
+					<td>{{share.s_date|date:"M d, Y H:i"}}</td>
+					<td>
+                        <a class="btn btn-sm btn-info" href="{% url 'download' share.s_title %}">View</a>
+                        <a class="btn btn-sm btn-danger" href="{% url 'deleteshare' share.id %}">Remove</a>
+                    </td>
+				</tr>
+					{% endfor %}
+                </tbody>
+			</table>
+		</div>
+        </div>
+	</div>
+</div>
+
+{% endblock %}
