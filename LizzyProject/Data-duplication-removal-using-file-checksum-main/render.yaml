@@ -3,7 +3,7 @@ services:
     name: ddp-app
     runtime: python
     plan: free
-    buildCommand: "./build.sh"
+    buildCommand: "pip install -r requirements.txt && cd myproject && python manage.py collectstatic --no-input && python manage.py migrate"
     startCommand: "cd myproject && gunicorn myproject.wsgi:application"
     envVars:
       - key: PYTHON_VERSION
